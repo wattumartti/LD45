@@ -48,3 +48,5 @@ MonoBehaviour:
     type: 3}
   levelStartingPositions:
   - {x: 0, y: 0.75}
+  currentLevelId: 0
+  powerUpCosts: {fileID: 11400000, guid: 684916498ef3688448ecbb8855ed13eb, type: 2}

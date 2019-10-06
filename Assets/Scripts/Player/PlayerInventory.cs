@@ -26,6 +26,8 @@ public class PlayerInventory : MonoBehaviour
     public Dictionary<PowerupBase.PowerupType, PowerupBase> playerPowerups = new Dictionary<PowerupBase.PowerupType, PowerupBase>();
     public List<PowerupBase.PowerupType> unlockedPowerUps = new List<PowerupBase.PowerupType>();
 
+    public int currencyAmount = 0;
+
     private void Awake()
     {
         Instance = this;
@@ -44,6 +46,14 @@ public class PlayerInventory : MonoBehaviour
         if (playerPowerups.ContainsKey(purchasedType))
         {
             Debug.LogError("Player already owns this powerup");
+            return;
+        }
+
+        int powerUpCost = GameManager.Instance.powerUpCosts.GetCostForPowerup(purchasedType);
+
+        if (powerUpCost > currencyAmount)
+        {
+            Debug.LogError("Not enough currency!");
             return;
         }
 

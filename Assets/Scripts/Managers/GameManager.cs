@@ -26,9 +26,11 @@ public class GameManager : MonoBehaviour
 
     public PlayerController playerController = null;
     [SerializeField] private PlayerController playerControllerPrefab = null;
-    public Vector2[] levelStartingPositions;
 
+    public Vector2[] levelStartingPositions;
     public int currentLevelId = 0;
+
+    public PowerupCostList powerUpCosts = null;
 
     private void Awake()
     {
@@ -40,7 +42,7 @@ public class GameManager : MonoBehaviour
         playerController = Instantiate(playerControllerPrefab, levelStartingPositions[0], Quaternion.identity);
 
         // TODO: Cool entrance
-        playerController.body.transform.DOScale(1, 0.5f);
+        playerController.playerSprite.transform.DOScale(1, 0.5f);
         playerController.body.bodyType = RigidbodyType2D.Dynamic;
     }
 }
