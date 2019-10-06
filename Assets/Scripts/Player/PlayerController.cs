@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerController : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class PlayerController : MonoBehaviour
     public Rigidbody2D body = null;
     [SerializeField] private float speed = 5f;
     [SerializeField] private float jumpForce = 10f;
-    [SerializeField] private SpriteRenderer playerSprite = null;
+    public SpriteRenderer playerSprite = null;
 
     [Header("Ground Checking")]
     [SerializeField] LayerMask groundLayer;
@@ -60,7 +61,58 @@ public class PlayerController : MonoBehaviour
     [Header("PowerUps")]
     [SerializeField] private float dashForce = 300f;
 
+    [Header("Health")]
+    [SerializeField] private ParticleSystem DeathVfx = null;
+
     private List<PowerupBase.PowerupType> usePowerUps = new List<PowerupBase.PowerupType>();
+
+    #region Health
+
+    public int maxHp = 1;
+    public int currentHp = 1;
+
+    public void TakeDamage(int damage)
+    {
+        currentHp -= damage;
+
+        if (currentHp <= 0)
+        {
+            DoDeath();
+        }
+    }
+
+    public void DoDeath()
+    {
+        body.velocity = Vector2.zero;
+        body.bodyType = RigidbodyType2D.Kinematic;
+        enableMovementInput = false;
+        playerSprite.transform.DOScale(0, 0.2f).OnComplete(() =>
+        {
+            StartCoroutine(PlayDeathVfx());
+        });
+    }
+
+    public IEnumerator PlayDeathVfx()
+    {
+        if (DeathVfx == null)
+        {
+            yield break;
+        }
+
+        DeathVfx.Play();
+
+        yield return new WaitForSeconds(DeathVfx.main.startLifetime.constantMax);
+
+        body.transform.localPosition = Vector3.zero;
+
+        playerSprite.transform.DOScale(1, 0.4f).OnComplete(() =>
+        {
+            body.bodyType = RigidbodyType2D.Dynamic;
+            enableMovementInput = true;
+        });
+    }
+
+    #endregion
 
     private void Awake()
     {
@@ -95,6 +147,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E) && HasPowerup(PowerupBase.PowerupType.DASH))
         {
             usePowerUps.Add(PowerupBase.PowerupType.DASH);
+        }
+
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            TakeDamage(1);
         }
     }
 

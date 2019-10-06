@@ -49,7 +49,7 @@ public class MenuManager : MonoBehaviour
     {
         CanvasGroup canvas = objectToTween.GetComponent<CanvasGroup>();
 
-        canvas.DOFade(0, 2).OnComplete(() => 
+        canvas.DOFade(0, 1).OnComplete(() => 
         {
             objectToTween.SetActive(false);
             GameManager.Instance.StartGame();
