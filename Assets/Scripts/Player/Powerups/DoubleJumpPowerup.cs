@@ -4,11 +4,22 @@ using UnityEngine;
 
 public class DoubleJumpPowerup : PowerupBase
 {
+    public DoubleJumpPowerup() : base()
+    {
+        type = PowerupType.DOUBLE_JUMP;
+    }
+
     public override bool ActivatePowerup()
     {
         if (!base.ActivatePowerup())
         {
-            Debug.LogError("asdasdasd");
+            Debug.LogError("Powerup not ready!");
+            return false;
+        }
+
+        if (PlayerController.Instance.isGrounded)
+        {
+            Debug.LogError("Player is on ground!");
             return false;
         }
 

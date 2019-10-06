@@ -34,9 +34,33 @@ public class PlayerController : MonoBehaviour
 
     private float horizontalMovement = 0;
     private bool useJump = false;
+    private bool _enableMovementInput = true;
+    private bool enableMovementInput
+    {
+        get
+        {
+            return _enableMovementInput;
+        }
+        set
+        {
+            if (value)
+            {
+                body.constraints = RigidbodyConstraints2D.FreezeRotation;
+            }
+
+            _enableMovementInput = value;
+        }
+    }
+
+    private bool isLookingRight = true;
 
     public bool isGrounded = false;
     public System.Action onGroundedAction = null;
+
+    [Header("PowerUps")]
+    [SerializeField] private float dashForce = 300f;
+
+    private List<PowerupBase.PowerupType> usePowerUps = new List<PowerupBase.PowerupType>();
 
     private void Awake()
     {
@@ -47,15 +71,30 @@ public class PlayerController : MonoBehaviour
     {
         horizontalMovement = Input.GetAxis("Horizontal") * speed;
 
-        if (Input.GetButtonUp("Vertical"))
+        if (Input.GetButtonDown("Vertical"))
         {
+            if (HasPowerup(PowerupBase.PowerupType.DOUBLE_JUMP))
+            {
+                usePowerUps.Add(PowerupBase.PowerupType.DOUBLE_JUMP);
+            }
             useJump = true;
         }
 
-        if (Input.GetKeyUp(KeyCode.K))
+        if (Input.GetKeyDown(KeyCode.K))
         {
             PlayerInventory.Instance.UnlockPowerup(PowerupBase.PowerupType.DOUBLE_JUMP);
             PlayerInventory.Instance.PurchasePowerup(PowerupBase.PowerupType.DOUBLE_JUMP);
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            PlayerInventory.Instance.UnlockPowerup(PowerupBase.PowerupType.DASH);
+            PlayerInventory.Instance.PurchasePowerup(PowerupBase.PowerupType.DASH);
+        }
+
+        if (Input.GetKeyDown(KeyCode.E) && HasPowerup(PowerupBase.PowerupType.DASH))
+        {
+            usePowerUps.Add(PowerupBase.PowerupType.DASH);
         }
     }
 
@@ -65,29 +104,42 @@ public class PlayerController : MonoBehaviour
 
         if (horizontalMovement != 0)
         {
-            //Move with X = Left right
-            Vector2 VelocityX = body.velocity;
+            isLookingRight = horizontalMovement > 0;
+            playerSprite.flipX = !isLookingRight;
 
-            if ((VelocityX.x <= 0 && (VelocityX.x >= horizontalMovement || horizontalMovement > 0)) || (VelocityX.x >= 0 && (VelocityX.x <= horizontalMovement || horizontalMovement < 0)))
+            Vector2 bodyVelocity = body.velocity;
+
+            if (CanUpdateXMovement(bodyVelocity.x))
             {
-                VelocityX.x = horizontalMovement;
-                body.velocity = VelocityX;
+                bodyVelocity.x = horizontalMovement;
+                body.velocity = bodyVelocity;
             }
-
-            //Vector3 movement = new Vector3(horizontalMovement, 0.0f, 0.0f);
-            //body.AddForce(movement * speed);
         }
         
         if (CanJump())
         {
             DoJump();
         }
-        else if (useJump && HasPowerup(PowerupBase.PowerupType.DOUBLE_JUMP) && !isGrounded)
+
+        foreach (PowerupBase.PowerupType powerUpType in usePowerUps)
         {
-            PlayerInventory.Instance.playerPowerups[PowerupBase.PowerupType.DOUBLE_JUMP].ActivatePowerup();
+            PlayerInventory.Instance.playerPowerups[powerUpType].ActivatePowerup();
         }
 
+        usePowerUps.Clear();
+
         useJump = false;      
+    }
+
+    private bool CanUpdateXMovement(float xVelocity)
+    {
+        if (!isGrounded || !enableMovementInput)
+        {
+            return false;
+        }
+
+        return xVelocity <= 0 && (xVelocity >= horizontalMovement || horizontalMovement > 0) 
+            || xVelocity >= 0 && (xVelocity <= horizontalMovement || horizontalMovement < 0);
     }
 
     private void UpdateGrounded()
@@ -109,7 +161,14 @@ public class PlayerController : MonoBehaviour
 
     public void DoJump()
     {
+        enableMovementInput = true;
         body.velocity = new Vector2(body.velocity.x, 0);
+
+        if ((isLookingRight && body.velocity.x < 0) || (!isLookingRight && body.velocity.x > 0))
+        {
+            body.velocity = new Vector2(-body.velocity.x, 0);
+        }
+
         Vector3 jumpMovement = new Vector3(0.0f, jumpForce, 0.0f);
         body.AddForce(jumpMovement, ForceMode2D.Impulse);
     }
@@ -122,5 +181,29 @@ public class PlayerController : MonoBehaviour
     private bool CanJump()
     {
         return useJump && isGrounded;
+    }
+
+    public IEnumerator DoDash()
+    {
+        enableMovementInput = false;
+        body.velocity = Vector2.zero;
+        body.constraints = body.constraints | RigidbodyConstraints2D.FreezePositionY;
+        body.AddForce(new Vector2(isLookingRight ? dashForce : -dashForce, 0), ForceMode2D.Impulse);
+
+        float timeRemaining = 0.5f;
+
+        while (timeRemaining > 0 && Mathf.Abs(body.velocity.x) > 0)
+        {
+            if (enableMovementInput)
+            {
+                yield break;
+            }
+
+            timeRemaining -= Time.deltaTime;
+
+            yield return null;
+        }
+
+        enableMovementInput = true;
     }
 }

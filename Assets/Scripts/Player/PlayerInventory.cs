@@ -54,6 +54,10 @@ public class PlayerInventory : MonoBehaviour
                 playerPowerups.Add(purchasedType, new DoubleJumpPowerup());
                 playerPowerups[purchasedType].OnPurchased();
                 break;
+            case PowerupBase.PowerupType.DASH:
+                playerPowerups.Add(purchasedType, new DashPowerup());
+                playerPowerups[purchasedType].OnPurchased();
+                break;
         }
     }
 }
