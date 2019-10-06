@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,7 +28,15 @@ public class GameManager : MonoBehaviour
     public PlayerController playerController = null;
     [SerializeField] private PlayerController playerControllerPrefab = null;
 
-    public Vector2[] levelStartingPositions;
+    [System.Serializable]
+    public struct LevelInfo
+    {
+        public Vector2 startingPosition;
+        public int levelId;
+        public string sceneName;
+    }
+
+    public LevelInfo[] levelInfoArray;
     public int currentLevelId = 0;
 
     public PowerupCostList powerUpCosts = null;
@@ -39,10 +48,34 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        playerController = Instantiate(playerControllerPrefab, levelStartingPositions[0], Quaternion.identity);
+        playerController = Instantiate(playerControllerPrefab, levelInfoArray[0].startingPosition, Quaternion.identity);
 
         // TODO: Cool entrance
         playerController.playerSprite.transform.DOScale(1, 0.5f);
         playerController.body.bodyType = RigidbodyType2D.Dynamic;
+    }
+
+    public void ChangeLevel(string sceneToOpen)
+    {
+        if (string.IsNullOrEmpty(sceneToOpen))
+        {
+            return;
+        }
+
+        SceneManager.LoadScene(sceneToOpen);
+        SceneManager.sceneLoaded += OnLevelLoaded;
+    }
+
+    public void OnLevelLoaded(Scene scene, LoadSceneMode loadMode)
+    {
+        foreach (LevelInfo info in levelInfoArray)
+        {
+            if (info.sceneName == scene.name)
+            {
+                currentLevelId = info.levelId;
+            }
+        }
+
+        StartGame();
     }
 }

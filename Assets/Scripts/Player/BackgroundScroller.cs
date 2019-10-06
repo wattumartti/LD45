@@ -26,7 +26,7 @@ public class BackgroundScroller : MonoBehaviour
         }
 
         float x = playerController.body.velocity.x * speed;
-        float y = (playerController.body.transform.position.y - GameManager.Instance.levelStartingPositions[GameManager.Instance.currentLevelId].y) * speed;
+        float y = (playerController.body.transform.position.y - GameManager.Instance.levelInfoArray[GameManager.Instance.currentLevelId].startingPosition.y) * speed;
 
         currentScroll = new Vector2(currentScroll.x + x * Time.deltaTime, scrollVertical ? y : 0);
 

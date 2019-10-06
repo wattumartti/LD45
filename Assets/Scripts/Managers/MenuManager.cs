@@ -8,6 +8,11 @@ public class MenuManager : MonoBehaviour
 {
     private static MenuManager _instance = null;
 
+    [SerializeField] private Canvas mainCanvas = null;
+    [SerializeField] private PowerupShop shopPrefab = null;
+
+    private PowerupShop shopInstance = null;
+
     public static MenuManager Instance
     {
         get
@@ -54,5 +59,23 @@ public class MenuManager : MonoBehaviour
             objectToTween.SetActive(false);
             GameManager.Instance.StartGame();
         });
+    }
+
+    public void OpenShop()
+    {
+        if (shopPrefab == null || mainCanvas == null)
+        {
+            return;
+        }
+
+        if (shopInstance != null)
+        {
+            shopInstance.CloseShop();
+            return;
+        }
+
+        Time.timeScale = 0;
+
+        shopInstance = Instantiate(shopPrefab, mainCanvas.transform);
     }
 }
