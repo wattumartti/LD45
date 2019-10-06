@@ -105,7 +105,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!60 &3627557826731679757
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 3627557826731679752}
-  speed: 5
+  speed: 10
   jumpForce: 300
   playerSprite: {fileID: 3627557826731679759}
   groundLayer:
@@ -156,6 +156,7 @@ MonoBehaviour:
     m_Bits: 311
   groundRayCastDistance: 0.2
   isGrounded: 0
+  dashForce: 300
 --- !u!114 &7419669385883884888
 MonoBehaviour:
   m_ObjectHideFlags: 0

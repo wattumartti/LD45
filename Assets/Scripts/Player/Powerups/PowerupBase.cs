@@ -8,7 +8,13 @@ public class PowerupBase
     public enum PowerupType
     {
         NONE = 0,
-        DOUBLE_JUMP = 1
+        DOUBLE_JUMP = 1,
+        DASH = 2
+    }
+
+    public PowerupBase()
+    {
+
     }
 
     public PowerupType type = PowerupType.NONE;
