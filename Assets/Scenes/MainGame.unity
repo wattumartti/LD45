@@ -740,27 +740,5 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5573854779963982973, guid: 7aa2d51bfd516f34f85bb231cc7dd5f7,
-        type: 3}
-      propertyPath: body
-      value: 
-      objectReference: {fileID: 3627557827369304164}
-    - target: {fileID: 5573854779963982973, guid: 7aa2d51bfd516f34f85bb231cc7dd5f7,
-        type: 3}
-      propertyPath: playerSprite
-      value: 
-      objectReference: {fileID: 3627557827369304165}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7aa2d51bfd516f34f85bb231cc7dd5f7, type: 3}
---- !u!50 &3627557827369304164 stripped
-Rigidbody2D:
-  m_CorrespondingSourceObject: {fileID: 3627557826731679752, guid: 7aa2d51bfd516f34f85bb231cc7dd5f7,
-    type: 3}
-  m_PrefabInstance: {fileID: 3627557827369304163}
-  m_PrefabAsset: {fileID: 0}
---- !u!212 &3627557827369304165 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 3627557826731679759, guid: 7aa2d51bfd516f34f85bb231cc7dd5f7,
-    type: 3}
-  m_PrefabInstance: {fileID: 3627557827369304163}
-  m_PrefabAsset: {fileID: 0}
