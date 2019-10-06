@@ -153,6 +153,16 @@ public class PlayerController : MonoBehaviour
         {
             TakeDamage(1);
         }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            MenuManager.Instance.OpenShop();
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            PlayerInventory.Instance.currencyAmount++;
+        }
     }
 
     void FixedUpdate()

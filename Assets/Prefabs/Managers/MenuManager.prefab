@@ -43,3 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1c6c24b438a7a447a87f2fcabf40c19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCanvas: {fileID: 0}
+  shopPrefab: {fileID: 257926947908980389, guid: c1b449ba6f7335d4a9243cd003e42874,
+    type: 3}
