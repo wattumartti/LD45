@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    [SerializeField] private Rigidbody2D body = null;
+    public Rigidbody2D body = null;
     [SerializeField] private float speed = 5f;
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private SpriteRenderer playerSprite = null;
@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask groundLayer;
     [SerializeField] float groundRayCastDistance;
 
-    private float horizontalMovement = 0;
+    internal float horizontalMovement = 0;
     private bool useJump = false;
     private bool _enableMovementInput = true;
     private bool enableMovementInput
