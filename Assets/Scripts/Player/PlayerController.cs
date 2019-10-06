@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        horizontalMovement = Input.GetAxis("Horizontal");
+        horizontalMovement = Input.GetAxis("Horizontal") * speed;
 
         if (Input.GetButtonUp("Vertical"))
         {
@@ -65,8 +65,17 @@ public class PlayerController : MonoBehaviour
 
         if (horizontalMovement != 0)
         {
-            Vector3 movement = new Vector3(horizontalMovement, 0.0f, 0.0f);
-            body.AddForce(movement * speed);
+            //Move with X = Left right
+            Vector2 VelocityX = body.velocity;
+
+            if ((VelocityX.x <= 0 && (VelocityX.x >= horizontalMovement || horizontalMovement > 0)) || (VelocityX.x >= 0 && (VelocityX.x <= horizontalMovement || horizontalMovement < 0)))
+            {
+                VelocityX.x = horizontalMovement;
+                body.velocity = VelocityX;
+            }
+
+            //Vector3 movement = new Vector3(horizontalMovement, 0.0f, 0.0f);
+            //body.AddForce(movement * speed);
         }
         
         if (CanJump())
@@ -75,11 +84,10 @@ public class PlayerController : MonoBehaviour
         }
         else if (useJump && HasPowerup(PowerupBase.PowerupType.DOUBLE_JUMP) && !isGrounded)
         {
-            if (!PlayerInventory.Instance.playerPowerups[PowerupBase.PowerupType.DOUBLE_JUMP].ActivatePowerup())
-            {
-                useJump = false;
-            }
+            PlayerInventory.Instance.playerPowerups[PowerupBase.PowerupType.DOUBLE_JUMP].ActivatePowerup();
         }
+
+        useJump = false;      
     }
 
     private void UpdateGrounded()
@@ -101,9 +109,9 @@ public class PlayerController : MonoBehaviour
 
     public void DoJump()
     {
+        body.velocity = new Vector2(body.velocity.x, 0);
         Vector3 jumpMovement = new Vector3(0.0f, jumpForce, 0.0f);
         body.AddForce(jumpMovement, ForceMode2D.Impulse);
-        useJump = false;
     }
 
     private bool HasPowerup(PowerupBase.PowerupType type)
